@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "products")
+//@Where(clause = "is_deleted = false")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,4 +39,6 @@ public class Product extends BaseEntity implements Serializable {
     private Set<ProductMapColor> productMapColors;
     @OneToMany(mappedBy = "product")
     private Set<Promotion> promotions;
+    @OneToMany(mappedBy = "product")
+    private Set<ProductImage> productImages;
 }

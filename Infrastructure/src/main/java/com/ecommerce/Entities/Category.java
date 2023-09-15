@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
+//@Where(clause = "is_deleted = false")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,7 +37,7 @@ public class Category extends BaseEntity implements Serializable {
     private int level;
     private boolean isShowWeb;
     private String slug;
-    @Nullable
+    @Column(nullable = true)
     private int sortOrder;
     @OneToMany(mappedBy = "category")
     private Set<ProductMapCategory> productMapCategories;

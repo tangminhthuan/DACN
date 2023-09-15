@@ -4,22 +4,29 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
 @MappedSuperclass
-
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public abstract class BaseEntity extends AuditableEntity {
     @Id
-    @GeneratedValue(generator = "uuid-gen")
-    @GenericGenerator(name = "uuid-gen", strategy = "uuid2")
-//    @GeneratedValue
     @Column(columnDefinition = "uniqueidentifier")
-    @Getter
-    @Setter
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
+
+    public UUID getId() {
+        return UUID.fromString(id.toString());
+    }
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }
