@@ -29,10 +29,32 @@ public class UserMapping {
         user.setGender(request.getGender());
         user.setIsDeleted(false);
         user.setBlock(false);
-        user.setEmailVerified(false);
-        user.setUserType(1);
+        user.setEmailVerified(true);
+        user.setUserType(2);
         user.setCreatedDate(new Date(System.currentTimeMillis()));
         user.setCreatedBy(user.getId());
+        return user;
+    }
+
+    public static User mapToAdmin(UUID userId, RegisterRequest request, String passwordHash) {
+        User user = new User();
+        UUID id = UUID.randomUUID();
+        user.setId(id);
+        user.setUserName(request.getUserName());
+        user.setEmail(request.getEmail());
+        user.setPasswordHash(passwordHash);
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setAddress(request.getAddress());
+        user.setDob(request.getDob());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setGender(request.getGender());
+        user.setIsDeleted(false);
+        user.setBlock(false);
+        user.setEmailVerified(true);
+        user.setUserType(2);
+        user.setCreatedDate(new Date(System.currentTimeMillis()));
+        user.setCreatedBy(userId);
         return user;
     }
 
@@ -42,7 +64,6 @@ public class UserMapping {
         userModel.setUserName(user.getUsername());
         userModel.setFirstName(user.getFirstName());
         userModel.setLastName(user.getLastName());
-        userModel.setPasswordHash(user.getPasswordHash());
         userModel.setPhoneNumber(user.getPhoneNumber());
         userModel.setAddress(user.getAddress());
         userModel.setEmail(user.getEmail());

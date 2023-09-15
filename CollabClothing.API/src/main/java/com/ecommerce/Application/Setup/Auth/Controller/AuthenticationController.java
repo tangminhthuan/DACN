@@ -10,6 +10,7 @@ import com.ecommerce.Entities.User;
 import com.ecommerce.Model.AppSettings;
 import com.ecommerce.Model.GenericResponse;
 import com.ecommerce.Model.UserModel;
+import io.jsonwebtoken.impl.DefaultClaims;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -28,13 +29,15 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000/"})
+@CrossOrigin(origins = {"http://localhost:3000/","http://localhost:4000/"})
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     @Autowired
@@ -45,7 +48,9 @@ public class AuthenticationController {
     private AppSettings appSettings;
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request, HttpServletRequest httpServletRequest) {
+    public String register(@RequestBody @Valid RegisterRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, bindingResult.getAllErrors().get(0).getDefaultMessage());
         String result = "User registered successfully";
         try {
             authenticationService.register(request, appSettings.getPath());
@@ -74,6 +79,12 @@ public class AuthenticationController {
         } catch (Exception e) {
             return ResponseEntity.status(400).body(new AuthenticationResponse());
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+         authenticationService.logout(request);
+         return ResponseEntity.ok("Logged out successfully");
     }
 
     @GetMapping("/verify")

@@ -21,6 +21,7 @@ import com.ecommerce.Application.Setup.Config.JwtService;
 import com.ecommerce.Model.GenericResponse;
 import com.ecommerce.Model.UserModel;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,13 @@ public class AuthenticationService {
     //region Authentication
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            if (auth.isAuthenticated()) {
+                User user = auth.getPrincipal() instanceof User ? (User) auth.getPrincipal() : null;
+                assert user != null;
+                user.setLastLogin(new Date());
+                userService.saveUser(user);
+            }
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid username or password");
         }
@@ -92,6 +99,15 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public String refreshToken(Map<String, Object> claims, String token) {
+        return jwtService.doGenerateRefreshToken(claims, token);
+    }
+
+    public void logout(HttpServletRequest request) {
+        String authToken = jwtService.getTokenFromRequest(request);
+        jwtService.invalidateToken(authToken);
     }
     //endregion
 

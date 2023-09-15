@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -32,6 +33,7 @@ public class ProductDetail implements Serializable {
     @Column(columnDefinition = "decimal(18,2)")
     private double priceOld;
     private int saleOff;
+    @Length(max = 2000)
     private String description;
     private int consumer;
     private String type;
